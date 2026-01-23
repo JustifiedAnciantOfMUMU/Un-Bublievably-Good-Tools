@@ -5,7 +5,6 @@ import numpy as np
 
 
 
-
 g     = 9.8           
 rho   = 1000        # Density of surrounding  - liquid Kg/m3
 k     = 1.289       # Polytropic index of gas
@@ -15,6 +14,9 @@ def frequency_to_radius(d, f):
     p = rho * g * d
     return (1/(2 * math.pi * f)) * math.sqrt((3*k*p) / rho)
 
+
+center_radii = 0.0019
+radii_deviation = 0.00015
 
 
 # Path to the CSV file produced by the previous script
@@ -32,27 +34,27 @@ depths = list(set(row['Depth'] for row in data))
 
 
 # Group radii by depth
-radii_by_depth = {}
+power_by_depth = {}
 for depth in depths:
-    radii = [float(frequency_to_radius(float(depth), float(row['frequency']))) for row in data if row['Depth'] == depth]
-    radii_by_depth[depth] = radii
+    radii = [float(row['SPL']) for row in data if row['Depth'] == depth and abs(float(frequency_to_radius(float(depth), float(row['frequency']))) - center_radii) <= radii_deviation]
+    power_by_depth[depth] = radii
 
 
-# Define bins once
-bins = np.linspace(0.001, 0.0045, 15)
-
-# Plot histogram for each depth
+# Plotting the data
 plt.figure(figsize=(10, 6))
-for depth in sorted(radii_by_depth.keys(), key=float):
-    counts, bin_edges = np.histogram(radii_by_depth[depth], bins=bins, density=True)
-    bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
-    plt.plot(bin_centers, counts, linewidth=2, marker='o', markersize=4, label=f'Depth {depth}m')
+# Sort depths for ordered plotting
+sorted_depths = sorted(power_by_depth.keys(), key=float)
+for depth in sorted_depths:
+    radii = power_by_depth[depth]
+    plt.scatter([depth] * len(radii), radii, label=f'Depth: {depth}')
 
-plt.xlabel('Radius (m)')
-plt.ylabel('Probability Density')
-plt.title('Bubble Radius Distribution at Various Depths')
+plt.xlabel('Depth (m)')
+plt.ylabel('Power (SPL)')
+plt.title('Power by Depth for bubbles with radii of {:.2f} cm +- {:.3f} cm'.format(center_radii * 100, radii_deviation * 100))
 plt.legend()
-plt.grid(True, alpha=0.3)
+plt.grid()
 plt.show()
+
+
 
 print(data)  # Print the data to verify it has been read correctly

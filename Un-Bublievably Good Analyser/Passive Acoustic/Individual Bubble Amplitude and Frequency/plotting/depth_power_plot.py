@@ -29,6 +29,7 @@ spl_values = [median_spl_by_depth[depth] for depth in depths_sorted]
 
 plt.figure(figsize=(10, 6))
 plt.plot(depths_sorted, spl_values, marker='o', linestyle='')  # Set linestyle to an empty string
+
 plt.xlabel('Depth')
 plt.ylabel('Median SPL')
 plt.title('Median SPL by Depth')
