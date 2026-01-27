@@ -54,7 +54,7 @@ for file in file_names:
     grouped_files[key].append({"index":file[4:-4], "frequency": bub_freq, "SPL": bub_SPL})  # Append filename without first 4 chars and .wav extension
 
   # Print the grouped files dictionary to verify the result
-csv_filepath = os.path.join(dataset_path, 'grouped_files.csv')
+csv_filepath = os.path.join(dataset_path, 'all_depths.csv')
 with open(csv_filepath, 'w', newline='') as csvfile:
     fieldnames = ['Depth', 'index', 'frequency', 'SPL']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
