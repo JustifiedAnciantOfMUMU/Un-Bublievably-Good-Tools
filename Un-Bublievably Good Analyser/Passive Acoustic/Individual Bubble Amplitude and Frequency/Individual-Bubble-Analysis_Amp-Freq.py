@@ -1,8 +1,8 @@
 import os, math, csv
 import numpy as np
-from scipy.signal import butter, filtfilt
+from scipy.signal import butter, filtfilt, freqz
 from scipy.io import wavfile
-
+import matplotlib.pyplot as plt
 
 
 def analyze_wav(filepath, lowcut=750.0, highcut=3000.0, order=4):
@@ -11,16 +11,26 @@ def analyze_wav(filepath, lowcut=750.0, highcut=3000.0, order=4):
     low = lowcut / nyquist
     high = highcut / nyquist
     b, a = butter(order, [low, high], btype='band')
+    ## x = freqz(b,a)
+
+    # plt.figure()
+    # plt.plot(np.abs(x[1]))
+    # plt.show()
 
     if data.ndim > 1:
         data_to_filter = data[:, 0]
     else:
         data_to_filter = data
 
+    
     filtered_data = filtfilt(b, a, data_to_filter)
+    plt.figure()
+    plt.plot(filtered_data)
+    plt.show()
+
     peak_amplitude = np.max(np.abs(filtered_data))
     amp_in_volts = (peak_amplitude / 32768.0) * 2.598
-    reciever_pa = amp_in_volts * (10**(hydrophone_sensitivity_db/20) * (1e-06))
+    reciever_pa = amp_in_volts / (10**(hydrophone_sensitivity_db/20) * (1e06))
     revciever_db = 20 * math.log10(reciever_pa / 1e-06)  # Convert to dB re 1uPa
 
     fft_result = np.fft.rfft(filtered_data)

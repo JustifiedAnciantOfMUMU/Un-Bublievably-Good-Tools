@@ -35,9 +35,9 @@ for depth in sorted(radii_by_depth.keys(), key=float):
     bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
     plt.plot(bin_centers, counts, linewidth=2, marker='o', markersize=4, label=f'Depth {depth}m')
 
-plt.xlabel('Radius (m)')
+plt.xlabel('Frequency (Hz)')
 plt.ylabel('Probability Density')
-plt.title('Bubble Radius Distribution at Various Depths')
+plt.title('Bubble Frequency Distribution at Various Depths')
 plt.legend()
 plt.grid(True, alpha=0.3)
 plt.show()
